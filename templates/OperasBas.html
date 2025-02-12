@@ -1,0 +1,32 @@
+{%extends "layout.html"%}
+{%block container %}
+
+<form action="/resultado2" method="post">
+    <label for="n1">N1:</label>
+    <input type="text" name="n1" id="n1"><br>
+
+    <label for="n2">N2:</label>
+    <input type="text" name="n2" id="n2"><br>
+
+    <label for="suma">Suma</label>
+    <input type="radio" name="operacion" id="suma" value="suma"><br>
+
+    <label for="resta">Resta</label>
+    <input type="radio" name="operacion" id="resta" value="resta"><br>
+
+    <label for="division">División</label>
+    <input type="radio" name="operacion" id="division" value="division"><br>
+
+    <label for="multiplicacion">Multiplicación</label>
+    <input type="radio" name="operacion" id="multiplicacion" value="multiplicacion"><br>
+
+    <input type="submit" value="Calcular">
+</form>  
+
+<h1 id="resultado">
+    {% if resultado is defined %}
+        El resultado de la {{ operacion }} es: {{ resultado }}
+    {% endif %}
+</h1>
+        
+{%endblock%}
