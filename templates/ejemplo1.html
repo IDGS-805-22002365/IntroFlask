@@ -1,6 +1,12 @@
-
-
 {%extends "layout.html"%}
 {%block container %}
+
+{% import "_macros.html" as macros %}
 <h1>Ejemplo 1</h1>
+
+
+macros.datos("nombre","Nombre")
+{{macros.datos("nombre","Nombre")}}
+{{macros.datos("nombre","password")}}
+
 {%endblock%}
