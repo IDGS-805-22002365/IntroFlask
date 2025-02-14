@@ -11,7 +11,7 @@ def index1():
     lista = ["Python", "Java", "C#", "JavaScript"]
     return render_template("index.html", titulo=titulo, lista=lista)
 
-@app.route("/Alumnos")
+@app.route("/Alumnos",methods=['GET','POST'])
 def alumnos():
     mat=''
     nom=''
