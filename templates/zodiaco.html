@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block container %}
+
+{% import "_macros.html" as macros %}
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Datos Personales</h2>
+            <form action="{{ url_for('zodiaco') }}" method="post" novalidate>
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    {{ macros.campoNuevo(form.nombre, class="form-control", placeholder="Nombre") }}
+                </div>
+                <div class="mb-3">
+                    {{ macros.campoNuevo(form.aPaterno, class="form-control", placeholder="Apellido Paterno") }}
+                </div>
+                <div class="mb-3">
+                    {{ macros.campoNuevo(form.aMaterno, class="form-control", placeholder="Apellido Materno") }}
+                </div>
+
+                <h4>Fecha de nacimiento</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        {{ macros.campoNuevo(form.dia, class="form-control", placeholder="Día") }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ macros.campoNuevo(form.mes, class="form-control", placeholder="Mes") }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ macros.campoNuevo(form.anio, class="form-control", placeholder="Año") }}
+                    </div>
+                </div>
+
+                <h4>Sexo</h4>
+                <div class="mb-3">
+                    {% for value, label in form.sexo.choices %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="{{ form.sexo.name }}" value="{{ value }}"
+                                {% if form.sexo.data == value %}checked{% endif %}>
+                            <label class="form-check-label">{{ label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="btn btn-primary">IMPRIMIR</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            {% if nombre_completo %}
+                <h2 class="mt-4">Hola <strong>{{ nombre_completo }}</strong></h2>
+            {% endif %}
+
+            {% if edad is not none %}
+                <h3>Tienes <strong>{{ edad }}</strong> años</h3>
+            {% endif %}
+
+            {% if zod_chino %}
+                <h3>Tu signo zodiacal es:</h3>
+                <h4><strong>{{ zod_chino }}</strong></h4>
+                {% if imagen_zodiaco %}
+                    <img src="{{ url_for('static', filename='img/' + imagen_zodiaco) }}" 
+                         alt="{{ zod_chino }}" 
+                         class="img-fluid" style="width: 150px; height: auto;">
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

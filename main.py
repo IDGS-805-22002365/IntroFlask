@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request
+from datetime import datetime
 import forms
 
 # Se crea la instancia de Flask
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "supersecreto123"
+
 
 # Ruta principal
 @app.route("/")
@@ -18,15 +21,55 @@ def alumnos():
     ape=''
     email=''
     alumno_clase = forms.UserForm(request.form)
-    if request.method == 'POST':
-        mar=alumno_clase.matricula.data
+    if request.method == 'POST' and alumno_clase.validate():
+        mat=alumno_clase.matricula.data
         nom=alumno_clase.nombre.data
         ape=alumno_clase.apellido.data
         email=alumno_clase.email.data
-        print("Nombre:{}".format(nom))
-        return render_template("Alumnos.html",form=alumno_clase)
-    else:
-        return render_template("Alumnos.html",form=alumno_clase)
+    print("Nombre:{}".format(nom))
+    return render_template("Alumnos.html",form=alumno_clase,mat=mat,nom=nom,ape=ape,email=email)
+
+
+def calcular_zodiaco_chino(anio):
+    signos = {
+        0: ("Rata", "rata.jpg"),
+        1: ("Buey", "buey.jpg"),
+        2: ("Tigre", "tigre.jpg"),
+        3: ("Conejo", "conejo.jpg"),
+        4: ("Dragón", "dragon.png"),
+        5: ("Serpiente", "serpiente.jpg"),
+        6: ("Caballo", "caballo.jpg"),
+        7: ("Cabra", "cabra.jpg"),
+        8: ("Mono", "mono.png"),
+        9: ("Gallo", "gallo.jpg"),
+        10: ("Perro", "perro.jpeg"),
+        11: ("Cerdo", "cerdo.jpg"),
+    }
+    return signos[(anio - 4) % 12]
+
+@app.route("/zodiaco", methods=["GET", "POST"])
+def zodiaco():
+    form = forms.Zodiaco(request.form)
+    zod_chino, imagen_zodiaco, edad, nombre_completo, sexo = "", "", None, "", ""
+    if request.method == "POST" and form.validate():
+        anio = form.anio.data
+        mes = form.mes.data
+        dia = form.dia.data
+        hoy = datetime.today()
+        edad = hoy.year - anio - ((hoy.month, hoy.day) < (mes, dia))
+        nombre_completo = f"{form.nombre.data} {form.aPaterno.data} {form.aMaterno.data}"
+        sexo = "Masculino" if form.sexo.data == "M" else "Femenino"
+        zod_chino, imagen_zodiaco = calcular_zodiaco_chino(anio)
+
+    return render_template("zodiaco.html", form=form, nombre_completo=nombre_completo, edad=edad, zod_chino=zod_chino, imagen_zodiaco=imagen_zodiaco, sexo=sexo)
+
+
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
 
 # Rutas con parámetros dinámicos
 @app.route('/user/<string:user>')
@@ -109,6 +152,7 @@ def result2():
         # Pasar el resultado y la operación a la plantilla
         return render_template("OperasBas.html", resultado=resultado, operacion=operacion)
     return render_template("OperasBas.html")
+
 
 # Rutas de plantillas adicionales
 @app.route("/ejemplo1")
