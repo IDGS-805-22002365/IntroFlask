@@ -1,11 +1,27 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,g,flash
+from flask_wtf.csrf import CSRFProtect
 from datetime import datetime
 import forms
 
 # Se crea la instancia de Flask
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "supersecreto123"
+csrf=CSRFProtect()
 
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+@app.before_request
+def before_request():
+    g.nombre='Mario'
+    print("Antes de la petición")
+    
+@app.after_request
+def after_request(response):
+    print("Después de la petición")
+    return response    
 
 # Ruta principal
 @app.route("/")
@@ -16,6 +32,7 @@ def index1():
 
 @app.route("/Alumnos",methods=['GET','POST'])
 def alumnos():
+    print("alumno:{}".format(g.nombre))
     mat=''
     nom=''
     ape=''
@@ -26,7 +43,8 @@ def alumnos():
         nom=alumno_clase.nombre.data
         ape=alumno_clase.apellido.data
         email=alumno_clase.email.data
-    print("Nombre:{}".format(nom))
+        mensaje='Bienvenido {}'.format(nom)
+        flash(mensaje)
     return render_template("Alumnos.html",form=alumno_clase,mat=mat,nom=nom,ape=ape,email=email)
 
 
@@ -62,14 +80,6 @@ def zodiaco():
         zod_chino, imagen_zodiaco = calcular_zodiaco_chino(anio)
 
     return render_template("zodiaco.html", form=form, nombre_completo=nombre_completo, edad=edad, zod_chino=zod_chino, imagen_zodiaco=imagen_zodiaco, sexo=sexo)
-
-
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
 
 # Rutas con parámetros dinámicos
 @app.route('/user/<string:user>')
@@ -174,4 +184,5 @@ def cinepolis1():
 
 # Punto de entrada de la aplicación
 if __name__ == '__main__':
+    csrf.init_app(app)
     app.run(debug=True, port=8000)

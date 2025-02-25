@@ -5,6 +5,8 @@
 {% import "_macros.html" as macros %}
 <h1>Alumnos</h1>
 <form action="" method="post" novalidate>
+{{form.csrf_token}}
+<input type="hidden" name="csrf_token" value="{{csrf_token()}}">
 
     <div class="row control-group">
         <div class="form-groupform-group col-xs12 floating-label-from-group controls">
